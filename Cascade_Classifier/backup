@@ -1,0 +1,38 @@
+    if len(objs_4) > 0:
+        for (x, y, w, h) in objs_4:
+            if w * h > AREA:
+                # cv2.rectangle(frame, (x, y), (x + w, y + h), (25, 200, 150), 2)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(frame_pil)
+                ImageDraw.Draw(frame_pil).text((0, 0), "The Taj Mahal is a rectangular mausoleum,\n 576 meters long and 293 meters wide,\n with a total area of 170,000 square meters.\n It was surrounded by a red sandstone wall.\n The central part is the mausoleum. Mosque and defense hall are built on both sides of the mausoleum.\n The two buildings are symmetrical and balanced, which correspond to each other.\n Each of the four sides of the mausoleum has a steeple,\n up to 40 meters high, with 50 stairs inside, which are designed for Muslim imams to climb up.\n The entrance to the mausoleum is connected by a wide,\n straight passage of red stone, symmetrical on the left and right,\n and neatly laid out.\n On either side of the walkway was a sidewalk with a fountain in the middle.\n\n泰姬陵整个陵园是一个长方形，长576米，宽293米，总面积为17万平方米。\n四周被一道红砂石墙围绕。正中央是陵寝，在陵寝东西两侧各建有清真寺和答辩厅这两座式样相同的建筑\n，两座建筑对称均衡，左右呼应。\n陵的四方各有一座尖塔，高达40米，内有50层阶梯，是专供穆斯林阿訇拾级登高而上的。\n大门与陵墓由一条宽阔笔直的用红石铺成的甬道相连接，左右两边对称，布局工整。\n在甬道两边是人行道，人行道中间修建了一个“十”字形喷泉水池。", (0, 0, 0), font2)
+                frame = cv2.cvtColor(np.array(frame_pil), cv2.COLOR_RGB2BGR)
+                # detect the sub-objects.
+                roi_gray_objs = gray[y: y+h, x: x+w]
+                roi_objs = frame[y: y+h, x: x+w]
+                
+                # spherical dome cascade classifier
+                objs_5 = cascade_5.detectMultiScale(gray, 1.3, 15)
+                # minaret cascade classifier
+                objs_6 = cascade_6.detectMultiScale(gray, 1.3, 15)
+                # arch cascade classifier
+                objs_7 = cascade_7.detectMultiScale(gray, 1.3, 15)
+
+                for (sx, sy, sw, sh) in objs_5:
+                    cv2.rectangle(frame, (sx, sy), (sx + sw, sy + sh), (255, 0, 0), 2)
+                    cv2.putText(frame, "spherical dome", (sx , sy), font, 0.5, (255, 0, 255), 1, cv2.LINE_AA)
+                    break
+                
+                for (mx, my, mw, mh) in objs_6:
+                    cv2.rectangle(frame, (mx, my), (mx + mw, my + mh), (0, 255, 0), 2)
+                    cv2.putText(frame, "minaret", (mx , my), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+                    break
+
+                for (ax, ay, aw, ah) in objs_7:
+                    cv2.rectangle(frame, (ax, ay), (ax + aw, ay + ah), (0, 255, 0), 2)
+                    cv2.putText(frame, "arch", (ax , ay), font, 0.5, (200, 100, 255), 1, cv2.LINE_AA)
+                    break
+                
+            else:
+                break
+
